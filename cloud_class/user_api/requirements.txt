@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+sqlalchemy
+pymysql
+databases
+cryptography
+prometheus-fastapi-instrumentator
+python-logging-loki

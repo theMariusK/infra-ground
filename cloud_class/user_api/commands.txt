@@ -1,0 +1,9 @@
+docker run --rm -e MYSQL_ROOT_PASSWORD='root_password123' -e MYSQL_USER='sa' -e MYSQL_PASSWORD='sa_password123' -p 3306:3306 --name=item-mysql -v taskmanagementvol:/var/lib/mysql mysql
+
+sudo docker exec -it <container_id> mysql -u root -p
+CREATE DATABASE taskmanagement;
+CREATE USER 'sa'@'172.17.0.3' IDENTIFIED BY 'sa_password123';
+GRANT ALL PRIVILEGES ON itemsdb.* TO 'sa'@'172.17.0.3';
+FLUSH PRIVILEGES;
+
+docker run -it --rm -p 8000:8000 user-api

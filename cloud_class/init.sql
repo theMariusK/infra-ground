@@ -1,0 +1,4 @@
+CREATE DATABASE IF NOT EXISTS taskmanagement;
+CREATE USER 'sa'@'%' IDENTIFIED BY 'sa_password123';
+GRANT ALL PRIVILEGES ON taskmanagement.* TO 'sa'@'%';
+FLUSH PRIVILEGES;

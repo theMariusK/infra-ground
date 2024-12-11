@@ -1,0 +1,105 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password123
+    ports:
+      - "3306:3306"
+    volumes:
+      - taskmanagementvol:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      individual_default:
+        ipv4_address: 172.21.0.2
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      individual_default:
+        ipv4_address: 172.21.0.6
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "4000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    networks:
+      individual_default:
+        ipv4_address: 172.21.0.7
+
+  user-api:
+    build:
+      context: ./user_api
+    container_name: user-api
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mysql
+    networks:
+      individual_default:
+        ipv4_address: 172.21.0.3
+
+  task-api:
+    build:
+      context: ./task_api
+    container_name: task-api
+    ports:
+      - "8001:8001"
+    depends_on:
+      - mysql
+    networks:
+      individual_default:
+        ipv4_address: 172.21.0.4
+
+  api-gateway:
+    build:
+      context: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    networks:
+      individual_default:
+        ipv4_address: 172.21.0.5
+
+  loki:
+    image: grafana/loki:latest
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yml
+    volumes:
+      - ./loki-config.yml:/etc/loki/local-config.yml
+    networks:
+      individual_default:
+        ipv4_address: 172.21.0.8
+
+  promtail:
+    image: grafana/promtail:latest
+    volumes:
+      - /var/log:/var/log
+      - ./promtail-config.yml:/etc/promtail/config.yml
+    command: -config.file=/etc/promtail/config.yml
+    networks:
+      individual_default:
+        ipv4_address: 172.21.0.9
+
+volumes:
+  taskmanagementvol:
+
+networks:
+  individual_default:
+    name: individual_default
+    ipam:
+      config:
+        - subnet: 172.21.0.0/16
