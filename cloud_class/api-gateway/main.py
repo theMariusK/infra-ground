@@ -4,8 +4,11 @@ from typing import Optional
 
 app = FastAPI()
 
-USER_API_URL = "http://172.21.0.3:8000"
-TASK_API_URL = "http://172.21.0.4:8001"
+#USER_API_URL = "http://172.21.0.3:8000"
+#TASK_API_URL = "http://172.21.0.4:8001"
+
+USER_API_URL = "http://user-api-service:8000"
+TASK_API_URL = "http://task-api-service:8001"
 
 async def forward_to_user_api(endpoint: str, method: str = "GET", data: Optional[dict] = None):
     url = f"{USER_API_URL}/{endpoint}"
